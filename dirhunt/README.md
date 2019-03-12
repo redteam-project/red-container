@@ -35,7 +35,8 @@ Options:
   --limit INTEGER                 Max number of pages processed to search for
                                   directories.
   --version
-  --help ```
+  --help 
+```
 
 ## Example
 
