@@ -50,16 +50,15 @@ Usage of /gobuster:
 
 ## Example
 The wordlists are pulled and stored under filesystem.
-
-/apache-user-enum-1.0.txt
-/apache-user-enum-2.0.txt
-/directory-list-1.0.txt
-/directory-list-2.3-big.txt
-/directory-list-2.3-medium.txt
-/directory-list-2.3-small.txt
-/directory-list-lowercase-2.3-big.txt
-/directory-list-lowercase-2.3-medium.txt
-/directory-list-lowercase-2.3-small.txt
+  - /apache-user-enum-1.0.txt
+  - /apache-user-enum-2.0.txt
+  - /directory-list-1.0.txt
+  - /directory-list-2.3-big.txt
+  - /directory-list-2.3-medium.txt
+  - /directory-list-2.3-small.txt
+  - /directory-list-lowercase-2.3-big.txt
+  - /directory-list-lowercase-2.3-medium.txt
+  - /directory-list-lowercase-2.3-small.txt
 
 ```bash
 $ docker build -t gobuster .
