@@ -39,7 +39,12 @@ Options:
 ```
 
 ## Example
+Pull the image from Docker hub.
+```bash
+$ docker pull trevorbryant/dirhunt
+```
 
+Building the image.
 ```bash
 $ docker build --rm -f dirhunt/Dockerfile -t dirhunt:latest dirhunt
 ```
@@ -57,4 +62,5 @@ Starting...
 ```
 
 # Source
-https://github.com/Nekmo/dirhunt
+  - https://github.com/Nekmo/dirhunt
+  - https://hub.docker.com/r/trevorbryant/dirhunt

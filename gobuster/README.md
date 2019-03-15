@@ -60,6 +60,12 @@ The wordlists are pulled and stored under filesystem.
   - /directory-list-lowercase-2.3-medium.txt
   - /directory-list-lowercase-2.3-small.txt
 
+Pull the image from Docker hub.
+```bash
+$ docker pull trevorbryant/gobuster
+```
+
+Building the image.
 ```bash
 $ docker build -t gobuster .
 ```
@@ -95,3 +101,4 @@ https://redteamproject.org/feed (Status: 200)
   - https://github.com/OJ/gobuster
   - https://ops.tips/blog/dockerfile-golang/
   - https://github.com/daviddias/node-dirbuster/tree/master/lists
+  - https://hub.docker.com/r/trevorbryant/gobuster
