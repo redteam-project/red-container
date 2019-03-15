@@ -1,7 +1,7 @@
 ## Usage
 
 ```bash
-$ docker run --rm -it dirhunt --h
+$ docker run --rm -it gobuster --h
 
 Usage of /gobuster:                                                                                                                                                                                                                           
   -P string                                                                                                                                                                                                                                   
@@ -92,6 +92,6 @@ https://redteamproject.org/feed (Status: 200)
 ```
 
 # Sources
-https://github.com/OJ/gobuster
-https://ops.tips/blog/dockerfile-golang/
-https://github.com/daviddias/node-dirbuster/tree/master/lists
+  - https://github.com/OJ/gobuster
+  - https://ops.tips/blog/dockerfile-golang/
+  - https://github.com/daviddias/node-dirbuster/tree/master/lists
