@@ -22,7 +22,7 @@ RUN git clone https://github.com/sullo/nikto.git && \
     mv program /usr/share/nikto && \
     cd /usr/share/nikto && \
     rm -rf /tmp/nikto && \
-    mv nikto.conf /etc/nikto.conf && \
+    mv nikto.conf.default /etc/nikto.conf && \
     mv nikto.pl /usr/bin/nikto && \
     echo "EXECDIR=/usr/share/nikto" >> /etc/nikto.conf
 
