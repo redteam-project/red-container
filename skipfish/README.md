@@ -1,3 +1,10 @@
+## EXAMPLE USAGE
+1. Start a sample webserver for testing: podman run -it --rm -d -p 8180:80 --name web nginx
+1. Create output directory on HOST system: mkdir ./output
+  1. Update permissions for output: chown a+rw ./output
+  1. WARNING: Without fixing these permissions skipfish container will fail to launch with a permissions issue.
+1. Run containerized skipfish against the sample server: podman run -it --rm -v ./output:/output:z test -o /output/test.out https://192.168.1.1:8180
+
 skipfish web application scanner - version 2.10b
 Usage: /skipfish [ options ... ] -W wordlist -o output_dir start_url [ start_url2 ... ]
 

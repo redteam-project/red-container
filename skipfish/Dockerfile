@@ -1,13 +1,15 @@
+ARG SKIPFISH_VERSION=2.10b
 #
 # BUILD CONTAINER
 #
 FROM alpine:latest as BUILDER
 
 # 2.10b released 2012. This is latest as of 2020 Dec 17.
-ENV SKIPFISH_VERSION_TO_DOWNLOAD 2.10b
+ARG SKIPFISH_VERSION
+ENV SKIPFISH_VERSION_TO_DOWNLOAD ${SKIPFISH_VERSION}
 ENV SKIPFISH_BASE_URL "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/skipfish/skipfish-"
-ENV SKIPFISH_DOWNLOAD_URL "$SKIPFISH_BASE_URL$SKIPFISH_VERSION_TO_DOWNLOAD.tgz"
-ENV SKIPFISH_SRC_FILENAME "skipfish-$SKIPFISH_VERSION_TO_DOWNLOAD.tgz"
+ENV SKIPFISH_DOWNLOAD_URL "$SKIPFISH_BASE_URL$SKIPFISH_VERSION.tgz"
+ENV SKIPFISH_SRC_FILENAME "skipfish-$SKIPFISH_VERSION.tgz"
 
 # Setup system level dependencies
 # WARNING: Using openssl-dev will cause the compilation to fail. Libressl-dev has the correct ssl
@@ -24,21 +26,32 @@ RUN mkdir -p /opt/skipfish && \
 	wget $SKIPFISH_DOWNLOAD_URL && \
 	tar vxzf ./$SKIPFISH_SRC_FILENAME && \
 	cd "skipfish-$SKIPFISH_VERSION_TO_DOWNLOAD" && \
-	make && \
-	cp ./skipfish ../ 
-	
-	
+	make 
+
 #
 # RUNTIME CONTAINER
 #
 FROM alpine:latest
-
+ARG SKIPFISH_VERSION
+ENV SKIPFISH_VERSION_TO_DOWNLOAD $SKIPFISH_VERSION
 # Setup system environment
 RUN apk --update add libressl pcre libidn
+RUN mkdir -p /opt/skipfish
 
-# RUNTIME CONTAINER
-# Copy built container
-COPY --from=BUILDER /opt/skipfish/skipfish /
-ENTRYPOINT ["/skipfish"]
-CMD ["-h"]
+# DON'T RUN AS ROOT
+RUN adduser -D skipfish_user
+
+# Volume to store output in users environment not the ephemeral container
+VOLUME /output
+
+# Executable
+COPY --from=BUILDER /opt/skipfish/skipfish-$SKIPFISH_VERSION_TO_DOWNLOAD /opt/skipfish/skipfish-$SKIPFISH_VERSION_TO_DOWNLOAD
+
+# Make directories usable by our non-root user
+RUN chown -R skipfish_user /output /opt/skipfish/skipfish-$SKIPFISH_VERSION_TO_DOWNLOAD
+
+USER skipfish_user
+WORKDIR /opt/skipfish/skipfish-2.10b
+ENTRYPOINT ["/opt/skipfish/skipfish-2.10b/skipfish"]
+CMD ["-H"]
 
