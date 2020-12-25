@@ -16,7 +16,7 @@ Usage: beef [options]
 ```bash
 docker build -t beef .
 # output omitted
-docker run --rm -it -p 3000:3000 beef -i
+docker run --rm -it -p 3000:3000 --env BEEF_USER=beef-admin --env BEEF_PASSWORD=feeb beef -i
 ```
 
 Example output:
