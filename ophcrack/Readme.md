@@ -1,3 +1,8 @@
+## CONTAINER USAGE
+```docker run ophcrack "<options>"```
+```docker run --rm -v ./rnbwtbl:/rnbwtbl ophcrack "-o /output/test.out https://0.0.0.0:8180"```
+
+## Tool help output
 ophcrack 3.8.0 by Objectif Securite (http://www.objectif-securite.ch)
 
 Usage: ophcrack [OPTIONS]
