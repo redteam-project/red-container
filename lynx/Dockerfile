@@ -4,3 +4,4 @@ RUN apt update && \
 
 ENTRYPOINT ["lynx"]
 CMD ["-h"]
+
