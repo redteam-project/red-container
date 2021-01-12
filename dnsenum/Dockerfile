@@ -42,7 +42,7 @@ RUN useradd -M dnsenum_user && \
 RUN cpanm Net::IP Net::DNS Net::Netmask Net::Whois::IP HTML::Parser WWW::Mechanize XML::Writer String::Random
 
 # Remove the build-essentials (178MB)
-RUN apt remove -y build-essential make && \
+RUN apt remove -y build-essential && \
 	apt autoremove -y 
 
 USER dnsenum_user
