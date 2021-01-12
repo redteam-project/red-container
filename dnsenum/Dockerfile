@@ -1,35 +1,14 @@
-#
-# BUILD CONTAINER
-#
-FROM ubuntu:latest as BUILDER
-
-ENV DNSENUM_GIT_SOURCE "https://github.com/fwaeytens/dnsenum.git"
-# Install git; used to pull dnsenum
-RUN apt update && \
-	apt install -y git
-
-# Pull DNS Enum using git
-RUN cd /opt && \
-	git clone $DNSENUM_GIT_SOURCE
-
-
-
-#
-# RUNTIME CONTAINER
-#
 FROM ubuntu:latest
-
+ENV DNSENUM_GIT_SOURCE "https://github.com/fwaeytens/dnsenum.git"
 # Install perl dependencies
 #	cpanminus - cpanm: Manage perl module deps
 #	make	- make: cpanm requires make to build modules after retrieval
 RUN apt update && \
-	apt install -y make cpanminus build-essential
+	apt install -y make cpanminus build-essential git
 
-# Create directory for dnsenum tool
-RUN mkdir -p /opt/dnsenum
-
-# Pull dnsenum script from builder
-COPY --from=BUILDER /opt/dnsenum /opt/dnsenum
+# Pull DNS Enum using git
+RUN cd /opt && \
+	git clone $DNSENUM_GIT_SOURCE
 
 WORKDIR /opt/dnsenum
 
