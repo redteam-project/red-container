@@ -1,6 +1,6 @@
 ## Container usage
 Example: 
-podman run --rm hydra -L /opt/usernames/top-usernames-shortlist.txt -P /opt/passwords/darkweb2017-top100.txt -f -V -s 8080 127.0.0.1 http-get
+docker run --rm hydra -L /opt/usernames/top-usernames-shortlist.txt -P /opt/passwords/darkweb2017-top100.txt -f -V -s 8080 127.0.0.1 http-get
 
 ## Usernames and passwords
 Included from:
