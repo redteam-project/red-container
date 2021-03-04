@@ -28,14 +28,17 @@ RUN dnf install -y \
         rubygems && \
     dnf clean all
 
-RUN useradd -c 'beef' -m -s /sbin/nologin beef
+RUN useradd -m beef
 
 RUN localedef -f UTF-8 -i en_US en_US.UTF-8
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
-WORKDIR /home/beef
+
+RUN mkdir -p /opt/beef && \
+	chmod 777 /opt/beef
+WORKDIR /opt/beef
 RUN git clone https://github.com/beefproject/beef.git beefsrc && \
     mv beefsrc/* . && \
     rm -rf beefsrc && \
@@ -46,12 +49,17 @@ RUN git clone https://github.com/beefproject/beef.git beefsrc && \
 RUN bundle install && \
     gem source -c
 
-RUN find /home/beef -name javascript-min -exec chown beef {} +
+#RUN find /opt/beef -name javascript-min -exec chown beef {} +
+#RUN chown beef /opt/beef/javascript-min
+
 RUN sed -e '/get_permission$/s/^/#/' -i update-geoipdb
 RUN ./update-geoipdb
 
 EXPOSE 3000 4567 6789
-USER beef
-COPY ./entrypoint.sh /home/beef
+RUN PWD && ls -lah
+COPY ./entrypoint.sh /opt/beef
+RUN chmod a+x /opt/beef/entrypoint.sh
 
-ENTRYPOINT ["/home/beef/entrypoint.sh"]
+
+USER beef
+ENTRYPOINT ["/opt/beef/entrypoint.sh"]
