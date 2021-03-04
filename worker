@@ -1,0 +1,47 @@
+# The first command line argument is a unique ID:
+WORKER_ID=$1
+# Simple logger
+#log(){
+#  printf "`date '+%H:%M:%S'` [Worker#%s] %s\n" "$WORKER_ID" "$1" >>worker.log
+#}
+
+# Bash 4+ logger optimization
+log(){
+  printf '%(%Y-%m-%d %H:%M:%S)T [Worker#%s] %s\n' '-1' "$WORKER_ID" "$1" >>worker.log
+}
+
+# Wait for the queue
+while [ ! -e myqueue ]
+#!/bin/bash
+# Worker pool thread model used from this article: https://www.celersms.com/threadpool-bash.htm
+do
+  sleep 1
+done
+
+touch mylock
+exec 3<myqueue # FD3 <- queue
+exec 4<mylock  # FD4 <- lock
+
+while true
+do
+
+  # Read the next task from the queue
+  flock 4
+  IFS= read -r -u 3 task
+  flock -u 4
+  if [ -z "$task" ]; then
+    #For continuous task
+    #sleep 1
+    #continue
+    #For build system context (stop when queue empty)
+    exit 0
+  fi
+  log "Processing tool: ${task}"
+  # Use gcloud to build to avoid trying to add docker.
+  if [ -f "$task/Dockerfile" ]; then
+    dockerfile_md5=$(md5sum ${task}/Dockerfile | cut -d ' ' -f1)
+    echo "Worker will build and publish $task with tag $dockerfile_md5. $task:$dockerfile_md5"
+    cd $task/
+    gcloud builds submit --tag gcr.io/redteam-test-299121/$task:$dockerfile_md5
+  fi
+done

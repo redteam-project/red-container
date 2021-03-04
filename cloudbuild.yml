@@ -1,31 +1,48 @@
 ---
 steps:
-- name: 'gcr.io/cloud-builders/docker'
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
   args:
-  - 'build'
-  - '--tag=gcr.io/${PROJECT_ID}/docker:latest'
-  - '--file=Dockerfile-cloudbuild'
-  - '.'
-- name: 'gcr.io/${PROJECT_ID}/docker'
-  args:
-    - 'build'
-    - '--tag=gcr.io/${PROJECT_ID}/gobuster:latest'
-    - '--file=gobuster/Dockerfile'
-    - '.'
-- name: 'gcr.io/${PROJECT_ID}/docker'
-  args:
-    - 'build'
-    - '--tag=gcr.io/${PROJECT_ID}/tshark:latest'
-    - '--file=tshark/Dockerfile'
-    - '.'
-- name: 'gcr.io/${PROJECT_ID}/docker'
-  args:
-    - 'build'
-    - '--tag=gcr.io/${PROJECT_ID}/beef:latest'
-    - '--file=beef/Dockerfile'
-    - '.'
-images:
-- 'gcr.io/${PROJECT_ID}/docker:latest'
-- 'gcr.io/${PROJECT_ID}/gobuster:latest'
-- 'gcr.io/${PROJECT_ID}/tshark:latest'
-- 'gcr.io/${PROJECT_ID}/beef:latest'
+  - '-Euo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    # Get list of directories to loop over
+    array=(*/)
+
+    # start worker queue
+    bash pool.sh start
+
+    # <= LOOP SUMMARY => 
+    #   - Split directories specific tools
+    #   - Enqueue toolname for a worker to build
+    dir_count=1
+    for dir in "${array[@]}"; do
+        echo "Building $dir_count/${#array[@]}"
+        toolname=${dir:0:(-1)} # Trim the trailing / from the name
+        dockerfile_dir="$(echo $dir)Dockerfile"
+        dockerfile_md5=$(md5sum ${dir}Dockerfile | cut -d ' ' -f1)
+
+        echo "Checking for existing image for tool: $toolname with Dockerfile md5 hash of: $dockerfile_md5"
+        existing_tags=$(gcloud container images list-tags --filter="tags:$dockerfile_md5" --format=json gcr.io/$PROJECT_ID/$toolname)
+        
+        # Only build if the tag does not equal the md5sum of the current Dockerfile
+        if [ "$existing_tags" == "[]" ]; then
+            # Enqueue this directory for a worker to build
+            echo "Pushing $toolname onto queue..."
+            echo $toolname >>myqueue
+        else
+            echo "Skipping build of $toolname: Image from this Dockerfile already exists in repo. https://gcr.io/$PROJECT_ID/$toolname"
+        fi
+        echo "...$toolname COMPLETE!\n"
+    done
+
+    # stop the workers when they are completed
+    worker_count="10"
+    while [ "$worker_count" != "NOK" ]; do
+        echo "Waiting on workers...Active workers: $worker_count"
+        sleep 10
+        worker_count="$(bash pool.sh status)"
+    done
+    bash pool.sh stop
+
